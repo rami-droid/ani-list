@@ -6,7 +6,6 @@ a CLI tool to help you find anime to watch, intended for use with one of the man
   - make the thing interactable 
   - making it look nice
   - persistence features
-```
 
 ## stuff I used 
   - jinkan api

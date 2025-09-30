@@ -60,5 +60,5 @@ def get_genres():
     if response.status_code != 200:
         raise ApiError(response.status_code, response.reason)
 
-    data = response.json
+    data = response.json()
     return data

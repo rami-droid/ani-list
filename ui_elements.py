@@ -9,6 +9,14 @@ def create_base_table(style: str):
     return table
 
 
+def create_genre_table(style: str):
+    table = Table(show_header=True, header_style=style)
+    table.add_column("Genre Name")
+    table.add_column("", width=12)
+    table.add_column("anime with genre")
+    return table
+
+
 def create_details_table(style: str):
     table = Table(show_header=True, header_style=style)
     return

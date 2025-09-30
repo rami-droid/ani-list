@@ -9,6 +9,7 @@ import api as api
 
 # importing custom ui elements
 from ui_elements import create_base_table
+from ui_elements import create_genre_table
 
 # setups for typer and console
 app = typer.Typer()
@@ -17,7 +18,11 @@ console = Console()
 
 
 @app.command()
-def search(query: str, amnt: int = 1):
+def search(
+    query: Annotated[str, typer.Option(help="search query")],
+    amnt: Annotated[int, typer.Option(help="amount of anime to show")] = 1,
+):
+    "Search for an anime by name"
     table = create_base_table("bold purple")
     genres = []
     try:
@@ -60,6 +65,18 @@ def details(query: str = "", id: int = 0):
                 full_anime["title"], full_anime["synopsis"], full_anime["background"]
             )
             console.print(table)
+    except api.ApiError as err:
+        console.print(f"[bold]Error {err.status}[/]: {err.message}")
+
+
+@app.command()
+def genres():
+    try:
+        data = api.get_genres()["data"]
+        table = create_genre_table("bold cyan")
+        for genre in data[:10]:
+            table.add_row(genre["name"], "", str(genre["count"]))
+        console.print(table)
     except api.ApiError as err:
         console.print(f"[bold]Error {err.status}[/]: {err.message}")
 

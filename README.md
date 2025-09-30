@@ -9,8 +9,11 @@ implementation. Only requirement is the requests python package.
 ## Commands
 
 - `search`
+  - lets you search by text for an anime.
 - `details`
-- `top-airing`
+  - lets you see the details of an anime. Search by either myanimelist ID, or name.
+- `top`
+  - retrieves the top anime, optionally include  `--airing` to see the top currently airing.
 
 ## TODO
 

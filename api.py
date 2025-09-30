@@ -22,10 +22,12 @@ def get_airing(nsfw=False):
     return data
 
 
-def get_top(nsfw=False):
-    response = requests.get(
-        base_url + "/top/anime", params={"sfw": str(not nsfw).lower()}
-    )
+def get_top(nsfw=False, airing=False):
+    if airing:
+        params = {"sfw": str(not nsfw).lower(), "filter": "airing"}
+    else:
+        params = {"sfw": str(not nsfw).lower()}
+    response = requests.get(base_url + "/top/anime", params=params)
     if response.status_code != 200:
         raise ApiError(response.status_code, response.reason)
 

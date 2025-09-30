@@ -1,6 +1,4 @@
 from typing import Annotated
-
-# from requests import head
 # from rich import print
 
 from requests import head
@@ -36,6 +34,7 @@ def search(query: str, amnt: int = 1):
 
 @app.command()
 def details(query: str = "", id: int = 0):
+    "retrieves the details of an anime"
     try:
         if id == 0:
             data = api.search_anime(query)["data"]
@@ -66,18 +65,21 @@ def details(query: str = "", id: int = 0):
 
 
 @app.command()
-def top_airing(
+def top(
     nsfw: Annotated[
         bool, typer.Option(help="disable the flag that hides nsfw results")
     ] = False,
     amount: Annotated[
         int, typer.Option(help="amount of results you want (max 25)")
     ] = 5,
+    airing: Annotated[
+        bool, typer.Option(help="filter to only currently airing")
+    ] = False,
 ):
-    "retrieves most popular anime currently airing"
+    "retrieves most popular anime"
     try:
-        data = api.get_airing(nsfw)["data"]
-        table = create_base_table()
+        data = api.get_top(nsfw, airing)
+        table = create_base_table("bold purple")
 
         for anime in data[:amount]:
             genres = []

@@ -12,6 +12,14 @@ def get_airing(nsfw=False):
     return data
 
 
+def get_top(nsfw=False):
+    response = requests.get(
+        base_url + "/top/anime", params={"sfw": str(not nsfw).lower()}
+    )
+    data = response.json()
+    return data
+
+
 def search_anime(query):
     response = requests.get(base_url + "/anime", params={"q": query})
     data = response.json()

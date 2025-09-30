@@ -6,6 +6,12 @@ Since my thing is basically just 2 python files you can download [api.py](https:
 if you wanna use my jinkan api
 implementation. Only requirement is the requests python package.
 
+## Commands
+
+- `search`
+- `details`
+- `top-airing`
+
 ## TODO
 
 - add more api stuff

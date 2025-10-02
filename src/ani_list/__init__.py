@@ -15,6 +15,9 @@ from .ui_elements import create_genre_table
 # setups for typer and console
 app = typer.Typer()
 
+
+# initialize database
+db.init()
 console = Console()
 
 
@@ -322,4 +325,3 @@ def db_mode(data):
 
 if __name__ == "__main__":
     db.init()
-    app()

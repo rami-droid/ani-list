@@ -2,7 +2,8 @@
 
 a CLI tool to help you find anime to watch, intended for use with one of the many
 anime cli watching programs.
-Since my thing is basically just 2 python files you can download [api.py](https://github.com/rami-droid/ani-list/blob/main/api.py)
+There's also a database to manage the status of your currently watched anime
+Since my thing is basically just a few python files you can download [api.py](https://github.com/rami-droid/ani-list/blob/main/api.py)
 if you wanna use my jinkan api
 implementation. Only requirement is the requests python package.
 
@@ -11,15 +12,21 @@ implementation. Only requirement is the requests python package.
 - `search`
   - lets you search by text for an anime.
 - `details`
-  - lets you see the details of an anime. Search by either myanimelist ID, or name.
+  - lets you see the details of an anime. Search by either myanimeList id, or name.
 - `top`
-  - retrieves the top anime, optionally include  `--airing` to see the top currently airing.
+  - retrieves the top anime.
+- `genres`
+  - retrieves the top genres and lets you add to your database.
+- `airing`
+  - retrieves the top airing anime.
+- `db`
+  - manage your database of anime. Delete or edit rows here! You can edit the status of the anime (watching, finished, etc) and change the current episode you're on.
 
-## TODO
+## todo
 
 
 - persistence
-  - create SQLite db stuff
+  - create sqlite db stuff
   - add episode tracking 
 
 - frontend
@@ -28,7 +35,7 @@ implementation. Only requirement is the requests python package.
 - watching anime
   - possibly integrating with ani-cli or another cli anime watcher
 
-## stuff I used
+## stuff i used
 
 - jinkan api
-- rich, and Typer and readchar
+- rich, and typer and readchar

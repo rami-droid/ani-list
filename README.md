@@ -17,9 +17,19 @@ implementation. Only requirement is the requests python package.
 
 ## TODO
 
-- add more api stuff
-- making it look nice
-- persistence features
+- API stuff
+  - genre filtering and pagination
+  - view weekly schedule
+
+- persistence
+  - create SQLite db stuff
+  - add episode tracking 
+
+- frontend
+  - maybe rewrite frontend for textual or smt idk
+
+- watching anime
+  - possibly integrating with ani-cli or another cli anime watcher
 
 ## stuff I used
 

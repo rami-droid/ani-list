@@ -1,4 +1,3 @@
-from rich import table
 from rich.table import Table
 
 
@@ -28,4 +27,25 @@ def create_schedule_table(style: str, day: str):
     table.add_column(day)
     table.add_column("rating")
     table.add_column("genres")
+    return table
+
+
+def create_db_table(style: str):
+    table = Table(show_header=True, header_style=style)
+    table.add_column("index")
+    table.add_column("Title")
+    table.add_column("rating")
+    table.add_column("genres")
+    return table
+
+
+def create_db_tui(style: str):
+    table = Table(show_header=True, header_style=style)
+    table.add_column("index")
+    table.add_column("mal id")
+    table.add_column("Title")
+    table.add_column("status")
+    table.add_column("episodes watched")
+    table.add_column("total episodes")
+    table.add_column("date added")
     return table

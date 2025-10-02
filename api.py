@@ -63,3 +63,23 @@ def get_genres(page: int = 0):
 
     data = response.json()
     return data
+
+
+def get_schedules(day: str):
+    days = [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+    ]
+    params = {"filter": day}
+    response = requests.get(base_url + "/schedules", params=params)
+
+    if response.status_code != 200:
+        raise ApiError(response.status_code, response.reason)
+
+    data = response.json()
+    return data

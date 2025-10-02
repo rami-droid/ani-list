@@ -6,10 +6,11 @@ from rich.console import Console
 from rich.table import Table
 import typer
 import api as api
-from readchar import readkey, key
+from readchar import readkey
 
 # importing custom ui elements
 from ui_elements import create_base_table
+from ui_elements import create_schedule_table
 from ui_elements import create_genre_table
 
 # setups for typer and console
@@ -94,6 +95,7 @@ def top(
         bool, typer.Option(help="filter to only currently airing")
     ] = False,
 ):
+    "retrieves most popular anime"
     running = True
     page = 1
     get_top(nsfw, airing, page)
@@ -122,7 +124,6 @@ def get_top(
     ] = False,
     page=0,
 ):
-    "retrieves most popular anime"
     try:
         data = api.get_top(nsfw, airing, page)["data"]
         table = create_base_table("bold purple")
@@ -139,11 +140,63 @@ def get_top(
 
 @app.command()
 def airing():
+    "returns the top airing anime"
     try:
         data = api.get_airing()["data"]
         table = create_base_table("bold purple")
 
         for anime in data:
+            genres = []
+            for genre in anime["genres"]:
+                genres.append(genre["name"])
+            table.add_row(anime["title"], str(anime["score"]), ", ".join(genres))
+        console.print(table)
+    except api.ApiError as err:
+        console.print(f"[bold]Error {err.status}[/]: {err.message}")
+
+
+@app.command()
+def schedule():
+    "shows currently airing anime by day"
+    days = [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+    ]
+
+    running = True
+    day = 0
+    while running:
+        console.print("(n)ext page (q)uit (p)revious page")
+        k = readkey()
+        if k == "n":
+            day += 1
+            day_index = day % len(days)
+            console.print("fetching...")
+            get_schedule(days[day_index])
+        if k == "p":
+            day -= 1
+            day_index = day % len(days)
+            get_schedule(days[day_index])
+            console.print("fetching...")
+        if k == "q":
+            break
+
+
+def get_schedule(day):
+    try:
+        data = api.get_schedules(day)["data"]
+        table = create_schedule_table("bold purple", day)
+        sorted_data = sorted(
+            data,
+            key=lambda item: item["score"] if item["score"] is not None else -1,
+            reverse=True,
+        )
+        for anime in sorted_data:
             genres = []
             for genre in anime["genres"]:
                 genres.append(genre["name"])

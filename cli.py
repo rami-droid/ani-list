@@ -1,7 +1,5 @@
 from typing import Annotated
-# from rich import print
 
-from requests import head
 from rich.console import Console
 from rich.table import Table
 import typer
@@ -10,7 +8,7 @@ from readchar import readkey
 import db
 
 # importing custom ui elements
-from ui_elements import create_base_table, create_db_table
+from ui_elements import create_base_table, create_db_table, create_db_tui
 from ui_elements import create_schedule_table
 from ui_elements import create_genre_table
 
@@ -36,6 +34,8 @@ def search(
             table.add_row(anime["title"], str(anime["score"]), ", ".join(genres))
         console.print(table)
 
+        db_mode(data)
+
     except api.ApiError as err:
         console.print(f"[bold]Error {err.status}[/]: {err.message}")
 
@@ -57,6 +57,7 @@ def details(query: str = "", id: int = 0):
                 full_anime["title"], full_anime["synopsis"], full_anime["background"]
             )
             console.print(table)
+            db_mode(data)
         else:
             full_anime = api.search_anime_full(str(id))["data"]
             table = Table(show_footer=True, header_style="bold red italic")
@@ -68,6 +69,7 @@ def details(query: str = "", id: int = 0):
                 full_anime["title"], full_anime["synopsis"], full_anime["background"]
             )
             console.print(table)
+            db_mode(full_anime)
     except api.ApiError as err:
         console.print(f"[bold]Error {err.status}[/]: {err.message}")
 
@@ -214,6 +216,72 @@ def get_schedule(day):
 ## DATABASE FEATURES
 
 
+@app.command()
+def db_proper():
+    running = True
+    data = db.fetch_all()
+    table = create_db_tui("bold italic green")
+    for row in data:
+        table.add_row(
+            str(data.index(row)),
+            str(row["mal_id"]),
+            row["title"],
+            row["status"],
+            str(row["episodes_watched"]),
+            str(row["total_episodes"]),
+            str(row["timestamp_added"]),
+        )
+    while running:
+        console.print(table)
+        index = int(input("input the index you want to change: \n"))
+        console.print("(e)dit an entry (r)emove an entry")
+        k = readkey()
+
+        if k == "e":
+            single_entry = create_db_tui("bold italic yellow")
+            row = data[index]
+            table.add_row(
+                str(data.index(row)),
+                str(row["mal_id"]),
+                row["title"],
+                row["status"],
+                str(row["episodes_watched"]),
+                str(row["total_episodes"]),
+                str(row["timestamp_added"]),
+            )
+            console.print(single_entry)
+            console.print("Leave empty for no change")
+            new_status = str(input("currently (watching, finished, want_to_watch: "))
+            new_episode = input(f"current episode (/{row['total_episodes']}): ")
+
+            if new_episode and new_status != "":
+                new_episode = int(new_episode)
+
+                db.update_anime(row["mal_id"], new_episode, new_status)
+            elif new_status == "" and new_episode != "":
+                new_episode = int(new_episode)
+
+                db.update_anime(row["mal_id"], new_episode, row["status"])
+            elif new_episode == "" and new_status != "":
+                db.update_anime(row["mal_id"], row["episodes_watched"], new_status)
+        if k == "r":
+            row = data[index]
+            db.remove_anime(row["mal_id"])
+
+        data = db.fetch_all()
+        table = create_db_tui("bold italic green")
+        for row in data:
+            table.add_row(
+                str(data.index(row)),
+                str(row["mal_id"]),
+                row["title"],
+                row["status"],
+                str(row["episodes_watched"]),
+                str(row["total_episodes"]),
+                str(row["timestamp_added"]),
+            )
+
+
 def db_mode(data):
     running = True
     table = create_db_table("bold cyan")
@@ -235,10 +303,8 @@ def db_mode(data):
 
     while running:
         console.print(table)
-        console.print("(a)dd to database, whatever else I add")
+        console.print("index to add to database, q to quit")
         k = readkey()
-        if k == "a":
-            console.print("a")
         if k.isdigit():
             i = int(k)
             anime = sorted_data[i]
@@ -250,6 +316,8 @@ def db_mode(data):
             )
             anime_data = (anime["mal_id"], anime["title"], status, anime["episodes"])
             db.add_anime(*anime_data)
+        if k == "q":
+            break
 
 
 if __name__ == "__main__":

@@ -22,11 +22,11 @@ def get_airing(nsfw=False):
     return data
 
 
-def get_top(nsfw=False, airing=False):
+def get_top(nsfw=False, airing=False, page: int = 0):
     if airing:
-        params = {"sfw": str(not nsfw).lower(), "filter": "airing"}
+        params = {"filter": "airing", "sfw": str(not nsfw).lower(), "page": str(page)}
     else:
-        params = {"sfw": str(not nsfw).lower()}
+        params = {"sfw": str(not nsfw).lower(), "page": str(page)}
     response = requests.get(base_url + "/top/anime", params=params)
     if response.status_code != 200:
         raise ApiError(response.status_code, response.reason)
@@ -54,8 +54,9 @@ def search_anime_full(id):
     return data
 
 
-def get_genres():
-    response = requests.get(base_url + "/genres/anime")
+def get_genres(page: int = 0):
+    params = {"page": page}
+    response = requests.get(base_url + "/genres/anime", params=params)
 
     if response.status_code != 200:
         raise ApiError(response.status_code, response.reason)

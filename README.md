@@ -17,9 +17,6 @@ implementation. Only requirement is the requests python package.
 
 ## TODO
 
-- API stuff
-  - genre filtering and pagination
-  - view weekly schedule
 
 - persistence
   - create SQLite db stuff
@@ -34,4 +31,4 @@ implementation. Only requirement is the requests python package.
 ## stuff I used
 
 - jinkan api
-- rich, and Typer
+- rich, and Typer and readchar

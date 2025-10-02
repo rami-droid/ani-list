@@ -3,6 +3,7 @@ from rich.console import Console
 
 
 db = sq.connect("ani_list.db")
+db.row_factory = sq.Row
 cur = db.cursor()
 
 create_table = """ 
@@ -21,9 +22,37 @@ timestamp_added DATETIME DEFAULT CURRENT_TIMESTAMP
 console = Console()
 
 
+cur.execute("SELECT mal_id, title, status FROM watchlist")
+rows = cur.fetchall()
+
+for r in rows:
+    print(r)
+
+
 def init():
     cur.execute(create_table)
     db.commit()
+
+
+def fetch_all():
+    command = """ 
+     SELECT * FROM watchlist
+    """
+    cur.execute(command)
+    database = cur.fetchall()
+    data = [dict(r) for r in database]
+    return data
+
+
+def fetch_one(mal_id):
+    command = """ 
+     SELECT * FROM watchlist WHERE mal_id = ? 
+    """
+    cur.execute(command)
+    row = cur.fetchone()
+    if row:
+        return row
+    return None
 
 
 def add_anime(mal_id, title, status, total_episodes):
@@ -67,5 +96,4 @@ def update_anime(mal_id, episodes_watched=None, status=None):
         WHERE mal_id = ?
         """
         cur.execute(update_row, (episodes_watched, status, mal_id))
-
     db.commit()

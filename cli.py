@@ -7,9 +7,10 @@ from rich.table import Table
 import typer
 import api as api
 from readchar import readkey
+import db
 
 # importing custom ui elements
-from ui_elements import create_base_table
+from ui_elements import create_base_table, create_db_table
 from ui_elements import create_schedule_table
 from ui_elements import create_genre_table
 
@@ -183,6 +184,9 @@ def schedule():
             day_index = day % len(days)
             get_schedule(days[day_index])
             console.print("fetching...")
+        if k == "d":
+            day_index = day % len(days)
+            db_mode(get_schedule(days[day_index]))
         if k == "q":
             break
 
@@ -202,9 +206,52 @@ def get_schedule(day):
                 genres.append(genre["name"])
             table.add_row(anime["title"], str(anime["score"]), ", ".join(genres))
         console.print(table)
+        return data
     except api.ApiError as err:
         console.print(f"[bold]Error {err.status}[/]: {err.message}")
 
 
+## DATABASE FEATURES
+
+
+def db_mode(data):
+    running = True
+    table = create_db_table("bold cyan")
+    sorted_data = sorted(
+        data,
+        key=lambda item: item["score"] if item["score"] is not None else -1,
+        reverse=True,
+    )
+    for anime in sorted_data:
+        genres = []
+        for genre in anime["genres"]:
+            genres.append(genre["name"])
+        table.add_row(
+            str(sorted_data.index(anime)),
+            anime["title"],
+            str(anime["score"]),
+            ", ".join(genres),
+        )
+
+    while running:
+        console.print(table)
+        console.print("(a)dd to database, whatever else I add")
+        k = readkey()
+        if k == "a":
+            console.print("a")
+        if k.isdigit():
+            i = int(k)
+            anime = sorted_data[i]
+            console.print(anime["mal_id"])
+            status = (
+                str(input("are you (watching) or (completed) or (want_to_watch)"))
+                .lower()
+                .strip("")
+            )
+            anime_data = (anime["mal_id"], anime["title"], status, anime["episodes"])
+            db.add_anime(*anime_data)
+
+
 if __name__ == "__main__":
+    db.init()
     app()

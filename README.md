@@ -22,6 +22,13 @@ implementation. Only requirement is the requests python package.
 - `db`
   - manage your database of anime. Delete or edit rows here! You can edit the status of the anime (watching, finished, etc) and change the current episode you're on.
 
+## install/build guide
+the package is available on pip, so you can just 
+  ```
+pip install ani-list
+```
+
+
 ## todo
 
 

@@ -1,8 +1,13 @@
 import sqlite3 as sq
 from rich.console import Console
+from pathlib import Path
 
+home = Path.home()
+data_dir = home / ".local" / "share" / "ani_list"
+data_dir.mkdir(parents=True, exist_ok=True)
+db_path = data_dir / "ani_list.db"
 
-db = sq.connect("ani_list.db")
+db = sq.connect(db_path)
 db.row_factory = sq.Row
 cur = db.cursor()
 
@@ -19,19 +24,13 @@ timestamp_added DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 """
 
-console = Console()
-
-
-cur.execute("SELECT mal_id, title, status FROM watchlist")
-rows = cur.fetchall()
-
-for r in rows:
-    print(r)
-
 
 def init():
     cur.execute(create_table)
     db.commit()
+
+
+init()
 
 
 def fetch_all():
